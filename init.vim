@@ -2,32 +2,41 @@
 " 插件
 " =================
 call plug#begin('~/.vim/plugged')
+"Airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+Plug 'akinsho/bufferline.nvim'
+Plug 'kyazdani42/nvim-tree.lua'
 
 "文件树
-Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'kristijanhusak/defx-git'
-Plug 'kristijanhusak/defx-icons'
 Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+
 "主题
 Plug 'NLKNguyen/papercolor-theme'
+
 "C高亮
 Plug 'NLKNguyen/c-syntax.vim'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 "VIM 中文help
 Plug 'yianwillis/vimcdoc'
-"括号自动补全                           
+
+"括号自动补全
 Plug 'jiangmiao/auto-pairs'
+
 "清除行尾无效空格
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'plasticboy/vim-markdown', {'for': 'markdown'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install', 'for': 'markdown'  }
 Plug 'majutsushi/tagbar'
+
 "Git
 Plug 'tpope/vim-fugitive'
+
 "左边实现显示git变动
 Plug 'airblade/vim-gitgutter'
+
 "coc 依赖Nodejs && yarn
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install() }, 'branch': 'release' }
 
@@ -38,17 +47,8 @@ call plug#end()
 " 主题
 " =================
 "Color options
-if (empty($TMUX))
-  if (has("nvim"))
-    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  if (has("termguicolors"))
-    set termguicolors
-  endif
-endif
 set background=dark
 colorscheme PaperColor
-let g:airline_theme='papercolor'
 let g:PaperColor_Theme_Options = {
   \   'language': {
   \     'python': {
@@ -65,6 +65,7 @@ let g:PaperColor_Theme_Options = {
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
+let g:airline_theme='papercolor'
 
 " =================
 " 通用配置
@@ -74,9 +75,9 @@ set number                      " 显示行号
 set relativenumber              " 显示相对行号（这个非常重要，慢慢体会）
 set autoindent                  " 自动缩进
 set smartindent                 " 智能缩进
-set tabstop=4                   " 设置 tab 制表符所占宽度为 4
-set softtabstop=4               " 设置按 tab 时缩进的宽度为 4
-set shiftwidth=4                " 设置自动缩进宽度为 4
+set tabstop=2                   " 设置 tab 制表符所占宽度为 4
+set softtabstop=2               " 设置按 tab 时缩进的宽度为 4
+set shiftwidth=2                " 设置自动缩进宽度为 4
 set expandtab                   " 缩进时将 tab 制表符转换为空格
 set nowrap                      " 不自动换行
 set cursorcolumn                " 高亮当前列
@@ -119,6 +120,41 @@ map <c-h> <c-w>h
 " =================
 " 专有配置
 " =================
+"Nvimtree
+"If 0, do not show the icons for one of 'git' 'folder' and 'files'
+"1 by default, notice that if 'files' is 1, it will only display
+"if nvim-web-devicons is installed and on your runtimepath.
+"if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
+"but this will not work when you set indent_markers (because of UI conflict)
+
+" default will show icon by default if no icon is provided
+" default shows no icon by default
+let g:nvim_tree_side = 'left'
+let g:nvim_tree_auto_open = 1
+let g:nvim_tree_ignore = [ '.git', '.vscode', '.cache', '.clangd' ] "empty by default
+let g:nvim_tree_width = 40
+let g:nvim_tree_auto_open = 1
+let g:nvim_tree_icons = {
+    \ 'default': '',
+    \ 'symlink': '',
+    \ 'git': {
+    \   'unstaged': "✗",
+    \   'staged': "✓",
+    \   'unmerged': "",
+    \   'renamed': "➜",
+    \   'untracked': "★",
+    \   'deleted': "",
+    \   'ignored': "◌"
+    \   },
+    \ }
+
+nmap <silent> <F8> :NvimTreeToggle<CR>
+nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>r :NvimTreeRefresh<CR>
+nnoremap <leader>n :NvimTreeFindFile<CR>
+" NvimTreeOpen, NvimTreeClose and NvimTreeFocus are also available if you need them
+
+
 "coc
 command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
 " 使用<TAB> 键触发COC补全
@@ -205,149 +241,6 @@ imap <C-j> <Plug>(coc-snippets-expand-jump)
 let g:coc_snippet_next = '<tab>'
 
 
-"Defx
-call defx#custom#column('filename', {
-    \ 'min_width': 20,
-    \ 'max_width': 80,
-    \ })
-
-call defx#custom#column('icon', {
-    \ 'directory_icon': '▸',
-    \ 'opened_icon': '▾',
-    \ 'root_icon': ' ',
-    \ })
-
-call defx#custom#column('git', 'indicators', {
-    \ 'Modified'  : 'M',
-    \ 'Staged'    : '✚',
-    \ 'Untracked' : '✭',
-    \ 'Renamed'   : '➜',
-    \ 'Unmerged'  : '═',
-    \ 'Ignored'   : '☒',
-    \ 'Deleted'   : '✖',
-    \ 'Unknown'   : '?'
-    \ })
-
-call defx#custom#column('git', 'column_length', 1)
-call defx#custom#column('git', 'show_ignored', 0)
-call defx#custom#column('git', 'raw_mode', 0)
-
-let g:defx_icons_enable_syntax_highlight = 1
-let g:defx_icons_column_length = 1
-
-call defx#custom#option('_', {
-    \ 'winwidth': 40,
-    \ 'split': 'vertical',
-    \ 'direction': 'topleft',
-    \ 'show_ignored_files': 0,
-    \ 'buffer_name': 'defxplorer',
-    \ 'toggle': 1,
-    \ 'resume': 1,
-    \ 'auto_cd': 0,
-    \ })
-
-fu! s:isdir(dir) abort
-    return !empty(a:dir) && (isdirectory(a:dir) ||
-       \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
-endfu
-
-function! s:open_defx_if_directory()
-  let l:full_path = expand(expand('%:p'))
-  if isdirectory(l:full_path)
-    Defx -auto-cd `expand('%:p')` -search=`expand('%:p')`
-  endif
-endfunction
-
-" 只有defx窗口时自动关闭
-autocmd BufEnter * if (!has('vim_starting') && winnr('$') == 1 && &filetype ==# 'defx') | quit | endif
-
-autocmd BufWritePost * call defx#redraw()
-
-"打开文件时自动选择文件
-augroup user_plugin_defx
-	  autocmd!
-	  " Define defx window mappings
-	  autocmd FileType defx call <SID>defx_mappings()
-	  autocmd BufNewFile,BufRead * Defx `getcwd()` -no-focus
-	  \ -search=`expand('%:p')`
-	augroup END
-	
-	function! s:defx_mappings() abort
-	  setlocal cursorline
-	endfunction
-	
-	call defx#custom#option('_', {
-	            \ 'winwidth': 40,
-	            \ 'split': 'vertical',
-	            \ 'direction': 'topleft',
-	            \ })
-
-
-" 打开目录时自动开启defx
-" FIXME: 此处如果打开目录时使用 `floating` 窗口，将窗口无法取得焦点，所以指定`vertical`方式
-" augroup ft_defx
-"     autocmd!
-"     autocmd VimEnter * sil! au! FileExplorer *
-"     autocmd FileType defx DisableWhitespace
-"     autocmd BufEnter * call s:open_defx_if_directory()
-"     autocmd FileType defx call DefxSettings()
-"     " au BufEnter * if s:isdir(expand('%')) | bd | call s:open_defx_if_directory() | endif
-"     " au BufEnter * if s:isdir(expand('%')) | bd | exe 'Defx -split=vertical' | endif
-" augroup end
-
-function! DefxContextMenu() abort
-  let l:actions = ['new_file', 'new_directory', 'rename', 'copy', 'move', 'paste', 'remove']
-  let l:selection = confirm('Action?', "&New file\nNew &Folder\n&Rename\n&Copy\n&Move\n&Paste\n&Delete")
-  silent exe 'redraw'
-
-  return feedkeys(defx#do_action(l:actions[l:selection - 1]))
-endfunction
-
-function! DefxSettings() abort
-  setl nonumber
-  setl norelativenumber
-  setl listchars=
-  setl signcolumn=
-  setl winfixwidth
-
-" Define mappings
-  ",+d open defx
-  nnoremap <silent> <F8> :Defx<CR>
-  nnoremap <silent><buffer>m :call DefxContextMenu()<CR>
-  nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open_directory') : defx#do_action('drop')
-  nnoremap <silent><buffer><expr> o defx#is_directory() ? defx#do_action('open_or_close_tree') : defx#do_action('drop')
-  nnoremap <silent><buffer><expr> vs defx#do_action('multi', [['drop', 'vsplit'], 'quit'])
-  nnoremap <silent><buffer><expr> sp defx#do_action('multi', [['drop', 'split'], 'quit'])
-  nnoremap <silent><buffer><expr> .. defx#do_action('cd', ['..'])
-  nnoremap <silent><buffer><expr> c defx#do_action('copy')
-  " nnoremap <silent><buffer><expr> m defx#do_action('move')
-  nnoremap <silent><buffer><expr> p defx#do_action('paste')
-  " nnoremap <silent><buffer><expr> s defx#do_action('open', 'botright vsplit')
-  " nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
-  nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
-  nnoremap <silent><buffer><expr> l defx#do_action('open_or_close_tree')
-  nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
-  nnoremap <silent><buffer><expr> N defx#do_action('new_file')
-  nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
-  nnoremap <silent><buffer><expr> d defx#do_action('remove')
-  nnoremap <silent><buffer><expr> r defx#do_action('rename')
-  nnoremap <silent><buffer><expr> ! defx#do_action('execute_command')
-  nnoremap <silent><buffer><expr> x defx#do_action('execute_system')
-  nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
-  nnoremap <silent><buffer><expr> h defx#do_action('toggle_ignored_files')
-  nnoremap <silent><buffer><expr> ; defx#do_action('repeat')
-  nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
-  nnoremap <silent><buffer><expr> q defx#do_action('quit')
-  nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select') . 'j'
-  nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
-  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
-  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-  nnoremap <silent><buffer><expr> <C-l> defx#do_action('redraw')
-  nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
-  nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
-endfunction
-
-
 "FZF
 nnoremap <silent> <C-p> :Files<CR>
 nnoremap <silent> <C-g> :GFiles<CR>
@@ -368,6 +261,38 @@ let g:tagbar_autoclose = 0
 let g:tagbar_autofocus = 1
 let g:tagbar_iconchars = ['+', '-']
 "set g:tagbar_ctags_bin = /usr/bin/ctags
+
+"Buffer
+" In your init.lua or init.vim
+lua << EOF
+require("bufferline").setup{
+  offsets = {
+  {
+    filetype = "NvimTree",
+    text = "File Explorer",
+    highlight = "Directory",
+    text_align = "left"
+  }
+  }
+}
+EOF
+
+" These commands will navigate through buffers in order regardless of which mode you are using
+" e.g. if you change the order of buffers :bnext and :bprevious will not respect the custom ordering
+nnoremap <silent> <leader>bn :BufferLineCycleNext<CR>
+nnoremap <silent> <leader>bp :BufferLineCyclePrev<CR>
+nnoremap <silent> <leader>bd :bd<CR>
+nnoremap <silent> <leader>br :BufferLineCloseRight<CR>
+
+" These commands will move the current buffer backwards or forwards in the bufferline
+" nnoremap <silent><mymap> :BufferLineMoveNext<CR>
+" nnoremap <silent><mymap> :BufferLineMovePrev<CR>
+
+" These commands will sort buffers by directory, language, or a custom criteria
+" nnoremap <silent>be :BufferLineSortByExtension<CR>
+nnoremap <silent> <leader>bs :BufferLineSortByDirectory<CR>
+" nnoremap <silent><mymap> :lua require'bufferline'.sort_buffers_by(function (buf_a, buf_b) return buf_a.id < buf_b.id end)<CR>
+
 
 
 "Git
