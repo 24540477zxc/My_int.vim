@@ -14,6 +14,8 @@ Plug 'junegunn/fzf.vim'
 "主题
 Plug 'tanvirtin/monokai.nvim'
 Plug 'sainnhe/sonokai'
+Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/everforest'
 
 "C高亮
 " Plug 'NLKNguyen/c-syntax.vim'
@@ -29,7 +31,7 @@ Plug 'jiangmiao/auto-pairs'
 "清除行尾无效空格
 Plug 'ntpeters/vim-better-whitespace'
 
-Plug 'majutsushi/tagbar'
+Plug 'preservim/tagbar'
 
 "注释
 Plug 'numToStr/Comment.nvim'
@@ -62,11 +64,13 @@ set background=dark
     set termguicolors
   endif
   " The configuration options should be placed before `colorscheme sonokai`.
-  let g:sonokai_style = 'maia'
+  let g:sonokai_style = 'atlantis'
   let g:sonokai_enable_italic = 0
   let g:sonokai_disable_italic_comment = 1
+
+  let g:everforest_background  = 'mediam'
+  colorscheme sonokai
 " colorscheme monokai
-colorscheme sonokai
 
 let g:airline_theme = 'sonokai'
 let g:airline#extensions#tabline#enabled = 1
@@ -151,6 +155,7 @@ let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
 nmap <Leader>gm <Plug>(git-messenger)
 
 "Cscope
+nmap <silent> <F5> :!cscope -Rbcq<CR>:cs reset<CR><CR>
 
 if has("cscope")
     set csprg=/usr/bin/cscope
