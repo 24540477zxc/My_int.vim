@@ -18,7 +18,6 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/everforest'
 
 "C高亮
-" Plug 'NLKNguyen/c-syntax.vim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 
 
@@ -44,6 +43,7 @@ Plug 'airblade/vim-gitgutter'
 
 "nvim-vmp
 Plug 'neovim/nvim-lspconfig'
+Plug 'ojroques/nvim-lspfuzzy'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -51,6 +51,7 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'glepnir/lspsaga.nvim'
 
 call plug#end()
 
@@ -195,6 +196,14 @@ endif
 "nvim-cmp
 set completeopt=menu,menuone,noselect
 
+"nvim_lsp
+nnoremap <silent><leader>ls <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent><leader>ll <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent><leader>lg <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent><leader>la <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent><leader>l; <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent><leader>l, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
 lua <<EOF
   -- Setup nvim-cmp.
   local cmp = require'cmp'
@@ -272,9 +281,11 @@ lua <<EOF
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig').clangd.setup {
-    capabilities = capabilities
+  local nvim_lsp = require('lspconfig').clangd.setup {
+      capabilities = capabilities
     }
+
+  require('lspfuzzy').setup {}
 
   --nvim-treesitter
   require'nvim-treesitter.configs'.setup {
@@ -289,5 +300,8 @@ lua <<EOF
       additional_vim_regex_highlighting = false,
     },
   }
+
+  -- local saga = require 'lspsaga'
+  -- saga.init_lsp_saga()
 
 EOF
