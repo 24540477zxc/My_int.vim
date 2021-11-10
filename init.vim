@@ -7,6 +7,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 
+"cursorline
+Plug 'yamatsum/nvim-cursorline'
+
 "文件树
 Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -36,7 +39,8 @@ Plug 'preservim/tagbar'
 Plug 'numToStr/Comment.nvim'
 
 "Git
-Plug 'tpope/vim-fugitive'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 
 "左边实现显示git变动
 Plug 'airblade/vim-gitgutter'
@@ -52,6 +56,10 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'glepnir/lspsaga.nvim'
+
+"搜索
+Plug 'kevinhwang91/nvim-hlslens'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
 call plug#end()
 
@@ -98,6 +106,7 @@ set showmatch                   " 高亮显示匹配的括号
 set nofoldenable                " 取消自动折叠
 set hlsearch                    " 高亮搜索
 set incsearch                   " 键入搜索
+set mouse=nvi                   " 鼠标
 
 
 " 打开自动定位到最后编辑的位置, 需要确认 .viminfo 当前用户可写
@@ -140,6 +149,17 @@ lua << EOF
 require('Comment').setup()
 EOF
 
+"Search
+noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap * *<Cmd>lua require('hlslens').start()<CR>
+noremap # #<Cmd>lua require('hlslens').start()<CR>
+noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+
+nnoremap <silent> <leader>s :noh<CR>
 
 "FZF
 nmap <silent> <F8> :FZF .<enter>
@@ -151,9 +171,6 @@ let g:tagbar_autofocus = 1
 let g:tagbar_iconchars = ['+', '-']
 
 "Git
-let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
-
-nmap <Leader>gm <Plug>(git-messenger)
 
 "Cscope
 nmap <silent> <F5> :!cscope -Rbcq<CR>:cs reset<CR><CR>
@@ -171,26 +188,26 @@ if has("cscope")
 		    silent cs add $CSCOPE_DB
 		endif
 
-  map <C-_> :cstag <C-R>=expand("<cword>")<CR><CR>
+  " map <C-_> :cstag <C-R>=expand("<cword>")<CR><CR>
   map g<C-]> :cs find c <C-R>=expand("<cword>")<CR><CR>
 	map g<C-\> :cs find s <C-R>=expand("<cword>")<CR><CR>
   "Find this C symbol
-  nmap <Leader>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
   "Find this definition
-	nmap <Leader>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
   "Find functions calling this function
-	nmap <Leader>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
   "Find this text string
-	nmap <Leader>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
   "Find this egrep pattern
-	nmap <Leader>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
   "Find this file
-	nmap <Leader>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
   "Find files #including this file
-	nmap <Leader>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	nmap <C-_>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
   "Find functions called by this function
-	nmap <Leader>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-	nmap <Leader>a :cs find a <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-_>a :cs find a <C-R>=expand("<cword>")<CR><CR>
 endif
 
 "nvim-cmp
@@ -303,5 +320,11 @@ lua <<EOF
 
   -- local saga = require 'lspsaga'
   -- saga.init_lsp_saga()
+
+  --Git
+  require('gitsigns').setup{
+    current_line_blame = true,
+  }
+
 
 EOF
