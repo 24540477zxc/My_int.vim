@@ -10,9 +10,11 @@ Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 "cursorline
 Plug 'yamatsum/nvim-cursorline'
 
-"文件树
+"Fuzzy
 Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 "主题
 Plug 'tanvirtin/monokai.nvim'
@@ -22,7 +24,6 @@ Plug 'sainnhe/everforest'
 
 "C高亮
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
-
 
 "VIM 中文help
 Plug 'yianwillis/vimcdoc'
@@ -163,6 +164,10 @@ nnoremap <silent> <leader>s :noh<CR>
 
 "FZF
 nmap <silent> <F8> :FZF .<enter>
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 "tagbar
 nmap <silent> <F2> :TagbarToggle<CR>
