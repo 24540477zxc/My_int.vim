@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+Plug 'kyazdani42/nvim-tree.lua'
 
 "cursorline
 Plug 'yamatsum/nvim-cursorline'
@@ -145,11 +146,6 @@ tnoremap <esc> <C-\><C-N>
 " =================
 " 专有配置
 " =================
-"Comment
-lua << EOF
-require('Comment').setup()
-EOF
-
 "Search
 noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
             \<Cmd>lua require('hlslens').start()<CR>
@@ -223,10 +219,48 @@ nnoremap <silent><leader>ls <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent><leader>ll <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent><leader>lg <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent><leader>la <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent><leader>l; <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent><leader>l, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap <silent><leader>lm; <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent><leader>ln, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
+"Nvim-tree
+let g:nvim_tree_gitignore = 1 "0 by default
+let g:nvim_tree_highlight_opened_files = 1
+" default will show icon by default if no icon is provided
+" default shows no icon by default
+let g:nvim_tree_icons = {
+    \ 'default': '',
+    \ 'symlink': '',
+    \ 'git': {
+    \   'unstaged': "✗",
+    \   'staged': "✓",
+    \   'unmerged': "",
+    \   'renamed': "➜",
+    \   'untracked': "★",
+    \   'deleted': "",
+    \   'ignored': "◌"
+    \   },
+    \ 'folder': {
+    \   'arrow_open': "",
+    \   'arrow_closed': "",
+    \   'default': "",
+    \   'open': "",
+    \   'empty': "",
+    \   'empty_open': "",
+    \   'symlink': "",
+    \   'symlink_open': "",
+    \   }
+    \ }
+
+nnoremap <silent> <F4> :NvimTreeToggle<CR>
+nnoremap <leader>tr :NvimTreeRefresh<CR>
+nnoremap <leader>tt :NvimTreeFindFileToggle<CR>
+" NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
+
 
 lua <<EOF
+  -- Comment
+  require('Comment').setup()
+
   -- Setup nvim-cmp.
   local cmp = require'cmp'
 
@@ -329,7 +363,58 @@ lua <<EOF
   --Git
   require('gitsigns').setup{
     current_line_blame = true,
+    keymaps = {
+      ['n <leader>hd'] = '<cmd>lua require"gitsigns".diffthis()<CR>',
+    },
   }
 
-
+  -- following options are the default
+  -- each of these are documented in `:help nvim-tree.OPTION_NAME`
+  require'nvim-tree'.setup {
+    disable_netrw       = true,
+    hijack_netrw        = true,
+    open_on_setup       = false,
+    ignore_ft_on_setup  = {},
+    auto_close          = true,
+    open_on_tab         = false,
+    hijack_cursor       = false,
+    update_cwd          = false,
+    update_to_buf_dir   = {
+      enable = true,
+      auto_open = true,
+    },
+    diagnostics = {
+      enable = false,
+      icons = {
+        hint = "",
+        info = "",
+        warning = "",
+        error = "",
+      }
+    },
+    update_focused_file = {
+      enable      = false,
+      update_cwd  = false,
+      ignore_list = {}
+    },
+    system_open = {
+      cmd  = nil,
+      args = {}
+    },
+    filters = {
+      dotfiles = false,
+      custom = {}
+    },
+    view = {
+      width = 40,
+      height = 30,
+      hide_root_folder = false,
+      side = 'left',
+      auto_resize = false,
+      mappings = {
+        custom_only = false,
+        list = {}
+      }
+    }
+  }
 EOF
