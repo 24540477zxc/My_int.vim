@@ -7,6 +7,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 Plug 'kyazdani42/nvim-tree.lua'
+Plug 'romgrk/barbar.nvim'
 
 "cursorline
 Plug 'yamatsum/nvim-cursorline'
@@ -215,12 +216,15 @@ endif
 set completeopt=menu,menuone,noselect
 
 "nvim_lsp
-nnoremap <silent><leader>ls <cmd>lua vim.lsp.buf.document_symbol()<CR>
-nnoremap <silent><leader>ll <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent><leader>lg <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent><leader>la <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent><leader>lm; <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent><leader>ln, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap <silent> <leader>ls <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> <leader>ll <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> <leader>lg <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <leader>la <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent> <leader>lm; <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> <leader>ln, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
+"lspsaga
+nnoremap <silent> <leader>ld <cmd>lua require'lspsaga.provider'.preview_definition()<CR>
 
 "Nvim-tree
 let g:nvim_tree_gitignore = 1 "0 by default
@@ -256,6 +260,22 @@ nnoremap <leader>tr :NvimTreeRefresh<CR>
 nnoremap <leader>tt :NvimTreeFindFileToggle<CR>
 " NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
 
+" Bufferline
+" Move to previous/next
+nnoremap <silent>    <leader>, :BufferPrevious<CR>
+nnoremap <silent>    <leader>. :BufferNext<CR>
+" Re-order to previous/next
+" nnoremap <silent>    <leader><<> :BufferMovePrevious<CR>
+" nnoremap <silent>    <leader><>> :BufferMoveNext<CR>
+" Pin/unpin buffer
+nnoremap <silent>    <leader>bp :BufferPin<CR>
+" Close buffer
+nnoremap <silent>    <leader>bq :BufferClose<CR>
+" Wipeout buffer
+nnoremap <silent>    <leader>bc :BufferCloseAllButCurrent<CR>
+" nnoremap <silent>    <leader>bc :BufferCloseAllButPinned<CR>
+nnoremap <silent>    <leader>bl :BufferCloseBuffersLeft<CR>
+nnoremap <silent>    <leader>br :BufferCloseBuffersRight<CR>
 
 lua <<EOF
   -- Comment
@@ -417,4 +437,5 @@ lua <<EOF
       }
     }
   }
+
 EOF
