@@ -227,7 +227,7 @@ nnoremap <silent> <leader>ln, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 nnoremap <silent> <leader>ld <cmd>lua require'lspsaga.provider'.preview_definition()<CR>
 
 "Nvim-tree
-let g:nvim_tree_gitignore = 1 "0 by default
+let g:nvim_tree_gitignore = 0 "0 by default
 let g:nvim_tree_highlight_opened_files = 1
 " default will show icon by default if no icon is provided
 " default shows no icon by default
@@ -308,24 +308,24 @@ lua <<EOF
             behavior = cmp.ConfirmBehavior.Replace,
         }),
         -- ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' })
-        ['<Tab>'] = function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end,
-        ['<S-Tab>'] = function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end,
+        --['<Tab>'] = function(fallback)
+        --    if cmp.visible() then
+        --        cmp.select_next_item()
+        --    elseif luasnip.expand_or_jumpable() then
+        --        luasnip.expand_or_jump()
+        --    else
+        --        fallback()
+        --    end
+        --end,
+        --['<S-Tab>'] = function(fallback)
+        --    if cmp.visible() then
+        --        cmp.select_prev_item()
+        --    elseif luasnip.jumpable(-1) then
+        --        luasnip.jump(-1)
+        --    else
+        --        fallback()
+        --    end
+        --end,
     },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -385,6 +385,7 @@ lua <<EOF
     current_line_blame = true,
     keymaps = {
       ['n <leader>hd'] = '<cmd>lua require"gitsigns".diffthis()<CR>',
+      ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
     },
   }
 
