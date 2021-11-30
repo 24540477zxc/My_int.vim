@@ -17,6 +17,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 "主题
 Plug 'tanvirtin/monokai.nvim'
@@ -63,6 +64,10 @@ Plug 'glepnir/lspsaga.nvim'
 "搜索
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+
+"Replace
+Plug 'nvim-lua/plenary.nvim'
+Plug 'windwp/nvim-spectre'
 
 call plug#end()
 
@@ -157,7 +162,18 @@ noremap # #<Cmd>lua require('hlslens').start()<CR>
 noremap g* g*<Cmd>lua require('hlslens').start()<CR>
 noremap g# g#<Cmd>lua require('hlslens').start()<CR>
 
-nnoremap <silent> <leader>s :noh<CR>
+nnoremap <silent> <leader>n :noh<CR>
+
+"Replace
+nnoremap <leader>S :lua require('spectre').open()<CR>
+
+"search current word
+nnoremap <leader>sw :lua require('spectre').open_visual({select_word=true})<CR>
+vnoremap <leader>s :lua require('spectre').open_visual()<CR>
+"  search in current file
+nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
+
+
 
 "FZF
 nmap <silent> <F8> :FZF .<enter>
@@ -227,7 +243,6 @@ nnoremap <silent> <leader>ln, <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 nnoremap <silent> <leader>ld <cmd>lua require'lspsaga.provider'.preview_definition()<CR>
 
 "Nvim-tree
-let g:nvim_tree_gitignore = 0 "0 by default
 let g:nvim_tree_highlight_opened_files = 1
 " default will show icon by default if no icon is provided
 " default shows no icon by default
@@ -366,6 +381,9 @@ lua <<EOF
   --nvim-treesitter
   require'nvim-treesitter.configs'.setup {
     ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+    git = {
+      ignore = 0
+    },
     highlight = {
       enable = true,              -- false will disable the whole extension
       -- disable = { "c", "rust" },  -- list of language that will be disabled
@@ -377,8 +395,79 @@ lua <<EOF
     },
   }
 
+  -- telescope
+  require('telescope').setup {
+    extensions = {
+      fzf = {
+        fuzzy = true,                    -- false will only do exact matching
+        override_generic_sorter = true,  -- override the generic sorter
+        override_file_sorter = true,     -- override the file sorter
+        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                         -- the default case_mode is "smart_case"
+      }
+    }
+  }
+  require('telescope').load_extension('fzf')
+
   -- local saga = require 'lspsaga'
   -- saga.init_lsp_saga()
+
+  -- Replace
+  require('spectre').setup({
+    mapping={
+      ['toggle_line'] = {
+          map = "dd",
+          cmd = "<cmd>lua require('spectre').toggle_line()<CR>",
+          desc = "toggle current item"
+      },
+      ['enter_file'] = {
+          map = "<cr>",
+          cmd = "<cmd>lua require('spectre.actions').select_entry()<CR>",
+          desc = "goto current file"
+      },
+      ['send_to_qf'] = {
+          map = "<leader>sq",
+          cmd = "<cmd>lua require('spectre.actions').send_to_qf()<CR>",
+          desc = "send all item to quickfix"
+      },
+      ['replace_cmd'] = {
+          map = "<leader>sc",
+          cmd = "<cmd>lua require('spectre.actions').replace_cmd()<CR>",
+          desc = "input replace vim command"
+      },
+      ['show_option_menu'] = {
+          map = "<leader>so",
+        cmd = "<cmd>lua require('spectre').show_options()<CR>",
+          desc = "show option"
+      },
+      ['run_replace'] = {
+          map = "<leader>sr",
+          cmd = "<cmd>lua require('spectre.actions').run_replace()<CR>",
+          desc = "replace all"
+      },
+      ['change_view_mode'] = {
+          map = "<leader>sv",
+          cmd = "<cmd>lua require('spectre').change_view()<CR>",
+          desc = "change result view mode"
+      },
+      ['toggle_live_update']={
+        map = "tu",
+        cmd = "<cmd>lua require('spectre').toggle_live_update()<CR>",
+        desc = "update change when vim write file."
+      },
+      ['toggle_ignore_case'] = {
+        map = "ti",
+        cmd = "<cmd>lua require('spectre').change_options('ignore-case')<CR>",
+        desc = "toggle ignore case"
+      },
+      ['toggle_ignore_hidden'] = {
+        map = "th",
+        cmd = "<cmd>lua require('spectre').change_options('hidden')<CR>",
+        desc = "toggle search hidden"
+      },
+      -- you can put your mapping here it only use normal mode
+    },
+  })
 
   --Git
   require('gitsigns').setup{
