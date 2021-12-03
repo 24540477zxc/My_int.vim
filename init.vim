@@ -83,19 +83,19 @@ if has('termguicolors')
 endif
 
 " The configuration options should be placed before `colorscheme sonokai`.
-" let g:sonokai_style = 'atlantis'
-" let g:sonokai_enable_italic = 0
-" let g:sonokai_disable_italic_comment = 1
+let g:sonokai_style = 'espresso'
+let g:sonokai_enable_italic = 0
+let g:sonokai_disable_italic_comment = 1
 
-let g:gruvbox_material_statusline_style = 'mix'
-let g:gruvbox_material_background = 'hard'
-let g:gruvbox_material_enable_italic = 0
-let g:gruvbox_material_disable_italic_comment = 1
+" let g:gruvbox_material_statusline_style = 'mix'
+" let g:gruvbox_material_background = 'hard'
+" let g:gruvbox_material_enable_italic = 0
+" let g:gruvbox_material_disable_italic_comment = 1
 
-colorscheme gruvbox-material
+colorscheme sonokai
 
-" let g:airline_theme = 'sonokai'
-let g:airline_theme = 'gruvbox_material'
+let g:airline_theme = 'sonokai'
+" let g:airline_theme = 'gruvbox_material'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
 
