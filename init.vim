@@ -27,6 +27,7 @@ Plug 'sainnhe/everforest'
 
 "C高亮
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+Plug 'p00f/nvim-ts-rainbow'
 
 "VIM 中文help
 Plug 'yianwillis/vimcdoc'
@@ -76,27 +77,32 @@ call plug#end()
 " =================
 "Color options
 set background=dark
- " Important!!
-  if has('termguicolors')
-    set termguicolors
-  endif
-  " The configuration options should be placed before `colorscheme sonokai`.
-  let g:sonokai_style = 'atlantis'
-  let g:sonokai_enable_italic = 0
-  let g:sonokai_disable_italic_comment = 1
+" Important!!
+if has('termguicolors')
+  set termguicolors
+endif
 
-  let g:everforest_background  = 'mediam'
-  colorscheme sonokai
-" colorscheme monokai
+" The configuration options should be placed before `colorscheme sonokai`.
+" let g:sonokai_style = 'atlantis'
+" let g:sonokai_enable_italic = 0
+" let g:sonokai_disable_italic_comment = 1
 
-let g:airline_theme = 'sonokai'
+let g:gruvbox_material_statusline_style = 'mix'
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_enable_italic = 0
+let g:gruvbox_material_disable_italic_comment = 1
+
+colorscheme gruvbox-material
+
+" let g:airline_theme = 'sonokai'
+let g:airline_theme = 'gruvbox_material'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
 
 " =================
 " 通用配置
 " =================
-set clipboard+=unnamed          " 启用共享粘贴板
+set clipboard+=unnamedplus          " 启用共享粘贴板
 set number                      " 显示行号
 set relativenumber              " 显示相对行号（这个非常重要，慢慢体会）
 set autoindent                  " 自动缩进
@@ -393,6 +399,14 @@ lua <<EOF
       -- Instead of true it can also be a list of languages
       additional_vim_regex_highlighting = false,
     },
+    rainbow = {
+      enable = true,
+      -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+      extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+      max_file_lines = nil, -- Do not enable for files with more than n lines, int
+      -- colors = {}, -- table of hex strings
+      -- termcolors = {} -- table of colour name strings
+    }
   }
 
   -- telescope
