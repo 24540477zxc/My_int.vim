@@ -20,10 +20,10 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 "主题
-Plug 'tanvirtin/monokai.nvim'
+" Plug 'tanvirtin/monokai.nvim'
 Plug 'sainnhe/sonokai'
-Plug 'sainnhe/gruvbox-material'
-Plug 'sainnhe/everforest'
+" Plug 'sainnhe/gruvbox-material'
+" Plug 'sainnhe/everforest'
 
 "C高亮
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
@@ -45,7 +45,8 @@ Plug 'numToStr/Comment.nvim'
 
 "Git
 Plug 'nvim-lua/plenary.nvim'
-Plug 'lewis6991/gitsigns.nvim'
+" Plug 'lewis6991/gitsigns.nvim'
+Plug 'tanvirtin/vgit.nvim'
 
 "左边实现显示git变动
 Plug 'airblade/vim-gitgutter'
@@ -484,13 +485,37 @@ lua <<EOF
   })
 
   --Git
-  require('gitsigns').setup{
-    current_line_blame = true,
+  local vgit = require('vgit')
+  vgit.setup({
+    debug = false,
     keymaps = {
-      ['n <leader>hd'] = '<cmd>lua require"gitsigns".diffthis()<CR>',
-      ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
+      ['n <leader>g'] = 'actions',
+      ['n <leader>gj'] = 'hunk_up',
+      ['n <leader>gk'] = 'hunk_down',
+      ['n <leader>gs'] = 'buffer_hunk_stage',
+      ['n <leader>gr'] = 'buffer_hunk_reset',
+      ['n <leader>gp'] = 'buffer_hunk_preview',
+      ['n <leader>gb'] = 'buffer_blame_preview',
+      ['n <leader>gf'] = 'buffer_diff_preview',
+      ['n <leader>gh'] = 'buffer_history_preview',
+      ['n <leader>gu'] = 'buffer_reset',
+      ['n <leader>gg'] = 'buffer_gutter_blame_preview',
+      ['n <leader>gd'] = 'project_diff_preview',
+      ['n <leader>gx'] = 'toggle_diff_preference',
     },
-  }
+    controller = {
+        hunks_enabled = true,
+        blames_enabled = true,
+        diff_strategy = 'index',
+        diff_preference = 'horizontal',
+        predict_hunk_signs = true,
+        predict_hunk_throttle_ms = 300,
+        predict_hunk_max_lines = 50000,
+        blame_line_throttle_ms = 150,
+        action_delay_ms = 300,
+    },
+    hls = vgit.themes.monikai,
+  })
 
   -- following options are the default
   -- each of these are documented in `:help nvim-tree.OPTION_NAME`
