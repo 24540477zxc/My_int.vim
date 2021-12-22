@@ -48,11 +48,9 @@ Plug 'nvim-lua/plenary.nvim'
 " Plug 'lewis6991/gitsigns.nvim'
 Plug 'tanvirtin/vgit.nvim'
 
-"左边实现显示git变动
-Plug 'airblade/vim-gitgutter'
-
 "nvim-vmp
 Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'ojroques/nvim-lspfuzzy'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -71,6 +69,9 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'windwp/nvim-spectre'
 
+"Termianl
+Plug 'akinsho/toggleterm.nvim'
+
 call plug#end()
 
 " =================
@@ -87,6 +88,7 @@ endif
 let g:sonokai_style = 'espresso'
 let g:sonokai_enable_italic = 0
 let g:sonokai_disable_italic_comment = 1
+let g:sonokai_transparent_background = 0
 
 " let g:gruvbox_material_statusline_style = 'mix'
 " let g:gruvbox_material_background = 'hard'
@@ -96,9 +98,12 @@ let g:sonokai_disable_italic_comment = 1
 colorscheme sonokai
 
 let g:airline_theme = 'sonokai'
-" let g:airline_theme = 'gruvbox_material'
+" " let g:airline_theme = 'gruvbox_material'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
+
+
+
 
 " =================
 " 通用配置
@@ -122,6 +127,7 @@ set nofoldenable                " 取消自动折叠
 set hlsearch                    " 高亮搜索
 set incsearch                   " 键入搜索
 set mouse=nvi                   " 鼠标
+set noshowmode                  " 不显示status
 
 
 " 打开自动定位到最后编辑的位置, 需要确认 .viminfo 当前用户可写
@@ -183,10 +189,12 @@ nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
 
 
 "FZF
-nmap <silent> <F8> :FZF .<enter>
+nmap <silent> <F8> :Files<CR>
 nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fs <cmd>lua require('telescope.builtin').grep_string()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fl :BLines<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 "tagbar
@@ -195,7 +203,6 @@ let g:tagbar_autoclose = 0
 let g:tagbar_autofocus = 1
 let g:tagbar_iconchars = ['+', '-']
 
-"Git
 
 "Cscope
 nmap <silent> <F5> :!cscope -Rbcq<CR>:cs reset<CR><CR>
@@ -319,11 +326,11 @@ lua <<EOF
     mapping = {
         ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
         ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        ['<Down>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-        ['<Up>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+        -- ['<Down>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+        -- ['<Up>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
         -- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
         -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        -- ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.close(),
         ['<CR>'] = cmp.mapping.confirm({
             select = true,
@@ -379,9 +386,27 @@ lua <<EOF
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  local nvim_lsp = require('lspconfig').clangd.setup {
-      capabilities = capabilities
-    }
+  -- local nvim_lsp = require('lspconfig').clangd.setup {
+  --     capabilities = capabilities
+  --   }
+
+  local lsp_installer = require("nvim-lsp-installer")
+
+  -- Register a handler that will be called for all installed servers.
+  -- Alternatively, you may also register handlers on specific server instances instead (see example below).
+  lsp_installer.on_server_ready(function(server)
+    local opts = {}
+
+      -- (optional) Customize the options passed to the server
+      if server.name == "clangd" then
+        opts.cmd = {"/home/jokeo/.local/share/nvim/lsp_servers/clangd/clangd", "--background-index"}
+        opts.capabilities =  capabilities
+      end
+
+      -- This setup() function is exactly the same as lspconfig's setup function.
+      -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+      server:setup(opts)
+  end)
 
   require('lspfuzzy').setup {}
 
@@ -565,6 +590,38 @@ lua <<EOF
         list = {}
       }
     }
+  }
+
+  -- terminal
+  require("toggleterm").setup{
+    -- size can be a number or function which is passed the current terminal
+    size = 20,
+    open_mapping = [[<c-\>]],
+    hide_numbers = true, -- hide the number column in toggleterm buffers
+    shade_filetypes = {"fzf"},
+    shade_terminals = false,
+    shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+    start_in_insert = true,
+    insert_mappings = false, -- whether or not the open mapping applies in insert mode
+    persist_size = true,
+    direction = 'float', --'vertical' | 'horizontal' | 'window' | 'float',
+    close_on_exit = true, -- close the terminal window when the process exits
+    shell = vim.o.shell, -- change the default shell
+    -- This field is only relevant if direction is set to 'float'
+    float_opts = {
+      -- The border key is *almost* the same as 'nvim_open_win'
+      -- see :h nvim_open_win for details on borders however
+      -- the 'curved' border is a custom border type
+      -- not natively supported but implemented in this plugin.
+      border = 'shadow',  --'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+      -- width = <value>,
+      -- height = <value>,
+      winblend = 3,
+      highlights = {
+        border = "Normal",
+        background = "Normal",
+        }
+      },
   }
 
 EOF
