@@ -44,8 +44,6 @@ Plug 'preservim/tagbar'
 Plug 'numToStr/Comment.nvim'
 
 "Git
-Plug 'nvim-lua/plenary.nvim'
-" Plug 'lewis6991/gitsigns.nvim'
 Plug 'tanvirtin/vgit.nvim'
 
 "nvim-vmp
@@ -108,7 +106,7 @@ let g:airline_powerline_fonts = 1        " 启用powerline样式字体
 " =================
 " 通用配置
 " =================
-set clipboard+=unnamedplus          " 启用共享粘贴板
+set clipboard+=unnamedplus      " 启用共享粘贴板
 set number                      " 显示行号
 set relativenumber              " 显示相对行号（这个非常重要，慢慢体会）
 set autoindent                  " 自动缩进
@@ -731,6 +729,11 @@ lua <<EOF
       dotfiles = false,
       custom = {}
     },
+    git = {
+      enable = true,
+      ignore = true,
+      timeout = 500,
+    },
     view = {
       width = 40,
       height = 30,
@@ -740,10 +743,24 @@ lua <<EOF
       mappings = {
         custom_only = false,
         list = {}
+      },
+      number = false,
+      relativenumber = false,
+      signcolumn = "yes"
+    },
+    trash = {
+      cmd = "trash",
+      require_confirm = true
+    },
+    actions = {
+      change_dir = {
+        global = false,
+      },
+      open_file = {
+        quit_on_open = false,
       }
     }
   }
-
   -- terminal
   require("toggleterm").setup{
     -- size can be a number or function which is passed the current terminal
