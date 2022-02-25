@@ -16,14 +16,12 @@ Plug 'yamatsum/nvim-cursorline'
 Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+" Plug 'nvim-telescope/telescope.nvim'
+" Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 "主题
-" Plug 'tanvirtin/monokai.nvim'
 Plug 'sainnhe/sonokai'
 " Plug 'sainnhe/gruvbox-material'
-" Plug 'sainnhe/everforest'
 
 "C高亮
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
@@ -44,7 +42,7 @@ Plug 'preservim/tagbar'
 Plug 'numToStr/Comment.nvim'
 
 "Git
-Plug 'tanvirtin/vgit.nvim'
+" Plug 'tanvirtin/vgit.nvim'
 
 "nvim-vmp
 Plug 'neovim/nvim-lspconfig'
@@ -64,7 +62,6 @@ Plug 'kevinhwang91/nvim-hlslens'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
 "Replace
-Plug 'nvim-lua/plenary.nvim'
 Plug 'windwp/nvim-spectre'
 
 "Termianl
@@ -198,12 +195,12 @@ nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
 
 "FZF
 nmap <silent> <F8> :Files<CR>
-nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>fs <cmd>lua require('telescope.builtin').grep_string()<cr>
-nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+" nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+" nnoremap <leader>fs <cmd>lua require('telescope.builtin').grep_string()<cr>
+" nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+" nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fl :BLines<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+" nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 "tagbar
 nmap <silent> <F2> :TagbarToggle<CR>
@@ -444,18 +441,18 @@ lua <<EOF
   }
 
   -- telescope
-  require('telescope').setup {
-    extensions = {
-      fzf = {
-        fuzzy = true,                    -- false will only do exact matching
-        override_generic_sorter = true,  -- override the generic sorter
-        override_file_sorter = true,     -- override the file sorter
-        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                         -- the default case_mode is "smart_case"
-      }
-    }
-  }
-  require('telescope').load_extension('fzf')
+  -- require('telescope').setup {
+  --   extensions = {
+  --     fzf = {
+  --       fuzzy = true,                    -- false will only do exact matching
+  --       override_generic_sorter = true,  -- override the generic sorter
+  --       override_file_sorter = true,     -- override the file sorter
+  --       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+  --                                        -- the default case_mode is "smart_case"
+  --     }
+  --   }
+  -- }
+  -- require('telescope').load_extension('fzf')
 
   local saga = require 'lspsaga'
   saga.setup{}
@@ -518,179 +515,179 @@ lua <<EOF
   })
 
   --Git
-  local vgit = require('vgit')
-  vgit.setup({
-    debug = false,
-    keymaps = {
-        ['n <leader>gp'] = 'buffer_hunk_preview',
-        ['n <leader>gd'] = 'buffer_diff_preview',
-        ['n <leader>gh'] = 'buffer_history_preview',
-        ['n <leader>gb'] = 'buffer_gutter_blame_preview',
-    },
-    settings = {
-    hls = {
-      GitBackgroundPrimary = 'NormalFloat',
-      GitBackgroundSecondary = {
-        gui = nil,
-        fg = nil,
-        bg = nil,
-        sp = nil,
-        override = false,
-      },
-      GitBorder = 'LineNr',
-      GitLineNr = 'LineNr',
-      GitComment = 'Comment',
-      GitSignsAdd = {
-        gui = nil,
-        fg = '#d7ffaf',
-        bg = nil,
-        sp = nil,
-        override = false,
-      },
-      GitSignsChange = {
-        gui = nil,
-        fg = '#7AA6DA',
-        bg = nil,
-        sp = nil,
-        override = false,
-      },
-      GitSignsDelete = {
-        gui = nil,
-        fg = '#e95678',
-        bg = nil,
-        sp = nil,
-        override = false,
-      },
-      GitSignsAddLn = 'DiffAdd',
-      GitSignsDeleteLn = 'DiffDelete',
-      GitWordAdd = {
-        gui = nil,
-        fg = nil,
-        bg = '#5d7a22',
-        sp = nil,
-        override = false,
-      },
-      GitWordDelete = {
-        gui = nil,
-        fg = nil,
-        bg = '#960f3d',
-        sp = nil,
-        override = false,
-      },
-    },
-    live_blame = {
-      enabled = true,
-      format = function(blame, git_config)
-        local config_author = git_config['user.name']
-        local author = blame.author
-        if config_author == author then
-          author = 'You'
-        end
-        local time = os.difftime(os.time(), blame.author_time)
-          / (60 * 60 * 24 * 30 * 12)
-        local time_divisions = {
-          { 1, 'years' },
-          { 12, 'months' },
-          { 30, 'days' },
-          { 24, 'hours' },
-          { 60, 'minutes' },
-          { 60, 'seconds' },
-        }
-        local counter = 1
-        local time_division = time_divisions[counter]
-        local time_boundary = time_division[1]
-        local time_postfix = time_division[2]
-        while time < 1 and counter ~= #time_divisions do
-          time_division = time_divisions[counter]
-          time_boundary = time_division[1]
-          time_postfix = time_division[2]
-          time = time * time_boundary
-          counter = counter + 1
-        end
-        local commit_message = blame.commit_message
-        if not blame.committed then
-          author = 'You'
-          commit_message = 'Uncommitted changes'
-          return string.format(' %s • %s', author, commit_message)
-        end
-        local max_commit_message_length = 255
-        if #commit_message > max_commit_message_length then
-          commit_message = commit_message:sub(1, max_commit_message_length) .. '...'
-        end
-        return string.format(
-          ' %s, %s • %s',
-          author,
-          string.format(
-            '%s %s ago',
-            time >= 0 and math.floor(time + 0.5) or math.ceil(time - 0.5),
-            time_postfix
-          ),
-          commit_message
-        )
-      end,
-    },
-    live_gutter = {
-      enabled = true,
-    },
-    scene = {
-      diff_preference = 'unified',
-    },
-    signs = {
-      priority = 10,
-      definitions = {
-        GitSignsAddLn = {
-          linehl = 'GitSignsAddLn',
-          texthl = nil,
-          numhl = nil,
-          icon = nil,
-          text = '',
-        },
-        GitSignsDeleteLn = {
-          linehl = 'GitSignsDeleteLn',
-          texthl = nil,
-          numhl = nil,
-          icon = nil,
-          text = '',
-        },
-        GitSignsAdd = {
-          texthl = 'GitSignsAdd',
-          numhl = nil,
-          icon = nil,
-          linehl = nil,
-          text = '┃',
-        },
-        GitSignsDelete = {
-          texthl = 'GitSignsDelete',
-          numhl = nil,
-          icon = nil,
-          linehl = nil,
-          text = '┃',
-        },
-        GitSignsChange = {
-          texthl = 'GitSignsChange',
-          numhl = nil,
-          icon = nil,
-          linehl = nil,
-          text = '┃',
-        },
-      },
-      usage = {
-        scene = {
-          add = 'GitSignsAddLn',
-          remove = 'GitSignsDeleteLn',
-        },
-        main = {
-          add = 'GitSignsAdd',
-          remove = 'GitSignsDelete',
-          change = 'GitSignsChange',
-        },
-      },
-    },
-    symbols = {
-      void = '⣿',
-    },
-    },
-  })
+  -- local vgit = require('vgit')
+  -- vgit.setup({
+  --   debug = false,
+  --   keymaps = {
+  --       ['n <leader>gp'] = 'buffer_hunk_preview',
+  --       ['n <leader>gd'] = 'buffer_diff_preview',
+  --       ['n <leader>gh'] = 'buffer_history_preview',
+  --       ['n <leader>gb'] = 'buffer_gutter_blame_preview',
+  --   },
+  --   settings = {
+  --   hls = {
+  --     GitBackgroundPrimary = 'NormalFloat',
+  --     GitBackgroundSecondary = {
+  --       gui = nil,
+  --       fg = nil,
+  --       bg = nil,
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --     GitBorder = 'LineNr',
+  --     GitLineNr = 'LineNr',
+  --     GitComment = 'Comment',
+  --     GitSignsAdd = {
+  --       gui = nil,
+  --       fg = '#d7ffaf',
+  --       bg = nil,
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --     GitSignsChange = {
+  --       gui = nil,
+  --       fg = '#7AA6DA',
+  --       bg = nil,
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --     GitSignsDelete = {
+  --       gui = nil,
+  --       fg = '#e95678',
+  --       bg = nil,
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --     GitSignsAddLn = 'DiffAdd',
+  --     GitSignsDeleteLn = 'DiffDelete',
+  --     GitWordAdd = {
+  --       gui = nil,
+  --       fg = nil,
+  --       bg = '#5d7a22',
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --     GitWordDelete = {
+  --       gui = nil,
+  --       fg = nil,
+  --       bg = '#960f3d',
+  --       sp = nil,
+  --       override = false,
+  --     },
+  --   },
+  --   live_blame = {
+  --     enabled = true,
+  --     format = function(blame, git_config)
+  --       local config_author = git_config['user.name']
+  --       local author = blame.author
+  --       if config_author == author then
+  --         author = 'You'
+  --       end
+  --       local time = os.difftime(os.time(), blame.author_time)
+  --         / (60 * 60 * 24 * 30 * 12)
+  --       local time_divisions = {
+  --         { 1, 'years' },
+  --         { 12, 'months' },
+  --         { 30, 'days' },
+  --         { 24, 'hours' },
+  --         { 60, 'minutes' },
+  --         { 60, 'seconds' },
+  --       }
+  --       local counter = 1
+  --       local time_division = time_divisions[counter]
+  --       local time_boundary = time_division[1]
+  --       local time_postfix = time_division[2]
+  --       while time < 1 and counter ~= #time_divisions do
+  --         time_division = time_divisions[counter]
+  --         time_boundary = time_division[1]
+  --         time_postfix = time_division[2]
+  --         time = time * time_boundary
+  --         counter = counter + 1
+  --       end
+  --       local commit_message = blame.commit_message
+  --       if not blame.committed then
+  --         author = 'You'
+  --         commit_message = 'Uncommitted changes'
+  --         return string.format(' %s • %s', author, commit_message)
+  --       end
+  --       local max_commit_message_length = 255
+  --       if #commit_message > max_commit_message_length then
+  --         commit_message = commit_message:sub(1, max_commit_message_length) .. '...'
+  --       end
+  --       return string.format(
+  --         ' %s, %s • %s',
+  --         author,
+  --         string.format(
+  --           '%s %s ago',
+  --           time >= 0 and math.floor(time + 0.5) or math.ceil(time - 0.5),
+  --           time_postfix
+  --         ),
+  --         commit_message
+  --       )
+  --     end,
+  --   },
+  --   live_gutter = {
+  --     enabled = true,
+  --   },
+  --   scene = {
+  --     diff_preference = 'unified',
+  --   },
+  --   signs = {
+  --     priority = 10,
+  --     definitions = {
+  --       GitSignsAddLn = {
+  --         linehl = 'GitSignsAddLn',
+  --         texthl = nil,
+  --         numhl = nil,
+  --         icon = nil,
+  --         text = '',
+  --       },
+  --       GitSignsDeleteLn = {
+  --         linehl = 'GitSignsDeleteLn',
+  --         texthl = nil,
+  --         numhl = nil,
+  --         icon = nil,
+  --         text = '',
+  --       },
+  --       GitSignsAdd = {
+  --         texthl = 'GitSignsAdd',
+  --         numhl = nil,
+  --         icon = nil,
+  --         linehl = nil,
+  --         text = '┃',
+  --       },
+  --       GitSignsDelete = {
+  --         texthl = 'GitSignsDelete',
+  --         numhl = nil,
+  --         icon = nil,
+  --         linehl = nil,
+  --         text = '┃',
+  --       },
+  --       GitSignsChange = {
+  --         texthl = 'GitSignsChange',
+  --         numhl = nil,
+  --         icon = nil,
+  --         linehl = nil,
+  --         text = '┃',
+  --       },
+  --     },
+  --     usage = {
+  --       scene = {
+  --         add = 'GitSignsAddLn',
+  --         remove = 'GitSignsDeleteLn',
+  --       },
+  --       main = {
+  --         add = 'GitSignsAdd',
+  --         remove = 'GitSignsDelete',
+  --         change = 'GitSignsChange',
+  --       },
+  --     },
+  --   },
+  --   symbols = {
+  --     void = '⣿',
+  --   },
+  --   },
+  -- })
 
   -- following options are the default
   -- each of these are documented in `:help nvim-tree.OPTION_NAME`
