@@ -16,8 +16,6 @@ Plug 'yamatsum/nvim-cursorline'
 Plug 'junegunn/fzf', { 'dir': '~/.nvim-fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-lua/plenary.nvim'
-" Plug 'nvim-telescope/telescope.nvim'
-" Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 "主题
 Plug 'sainnhe/sonokai'
@@ -36,26 +34,38 @@ Plug 'jiangmiao/auto-pairs'
 "清除行尾无效空格
 Plug 'ntpeters/vim-better-whitespace'
 
-Plug 'preservim/tagbar'
+" Plug 'preservim/tagbar'
+Plug 'liuchengxu/vista.vim'
 
 "注释
 Plug 'numToStr/Comment.nvim'
-
-"Git
-" Plug 'tanvirtin/vgit.nvim'
 
 "nvim-vmp
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
 Plug 'ojroques/nvim-lspfuzzy'
+Plug 'tami5/lspsaga.nvim'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+" Plug 'hrsh7th/cmp-vsnip'
+" Plug 'hrsh7th/vim-vsnip'
+
+" For luasnip users.
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
-Plug 'tami5/lspsaga.nvim'
+
+" For ultisnips users.
+" Plug 'SirVer/ultisnips'
+" Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+" For snippy users.
+" Plug 'dcampos/nvim-snippy'
+" Plug 'dcampos/cmp-snippy'
 
 "搜索
 Plug 'kevinhwang91/nvim-hlslens'
@@ -63,9 +73,6 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
 "Replace
 Plug 'windwp/nvim-spectre'
-
-"Termianl
-Plug 'akinsho/toggleterm.nvim'
 
 call plug#end()
 
@@ -94,9 +101,8 @@ colorscheme sonokai
 
 let g:airline_theme = 'sonokai'
 " " let g:airline_theme = 'gruvbox_material'
-let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#enabled = 0
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
-
 
 
 
@@ -126,9 +132,9 @@ set noshowmode                  " 不显示status
 
 
 " 打开自动定位到最后编辑的位置, 需要确认 .viminfo 当前用户可写
-if has("autocmd")
-    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
+" if has("autocmd")
+"     autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+" endif
 
 
 " ==================
@@ -161,53 +167,33 @@ tnoremap <esc> <C-\><C-N>
 " 专有配置
 " =================
 
-" Format
+" Clang format
 map <leader>k :py3f /home/jokeo/tool/clang/tools/clang-format/clang-format.py<cr>
-
-
-" map to <Leader>cf in C++ code
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
-
-"Search
-noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap * *<Cmd>lua require('hlslens').start()<CR>
-noremap # #<Cmd>lua require('hlslens').start()<CR>
-noremap g* g*<Cmd>lua require('hlslens').start()<CR>
-noremap g# g#<Cmd>lua require('hlslens').start()<CR>
-
-nnoremap <silent> <leader>n :noh<CR>
-
 "Replace
 nnoremap <leader>S :lua require('spectre').open()<CR>
-
-"search current word
 nnoremap <leader>sw :lua require('spectre').open_visual({select_word=true})<CR>
 vnoremap <leader>s :lua require('spectre').open_visual()<CR>
-"  search in current file
 nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
-
-
 
 "FZF
 nmap <silent> <F8> :Files<CR>
-" nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-" nnoremap <leader>fs <cmd>lua require('telescope.builtin').grep_string()<cr>
-" nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-" nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fl :BLines<cr>
-" nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>fb :Buffers<cr>
 
-"tagbar
-nmap <silent> <F2> :TagbarToggle<CR>
-let g:tagbar_autoclose = 0
-let g:tagbar_autofocus = 1
-let g:tagbar_iconchars = ['+', '-']
-
+"vista.vim
+nmap <silent> <F2> :Vista finder nvim_lsp<CR>
+let g:vista_default_executive = 'nvim_lsp'
+let g:vista_executive_for = {
+  \ 'c': 'nvim_lsp',
+  \ 'cpp': 'nvim_lsp',
+  \ 'php': 'nvim_lsp',
+  \ 'python': 'nvim_lsp',
+  \ }
+let g:vista_fzf_preview = ['right:50%']
+let g:vista#renderer#enable_icon = 1
 
 "Cscope
 nmap <silent> <F5> :!cscope -Rbcq<CR>:cs reset<CR><CR>
@@ -307,13 +293,39 @@ nnoremap <silent>    <leader>bp :BufferPin<CR>
 nnoremap <silent>    <leader>bq :BufferClose<CR>
 " Wipeout buffer
 nnoremap <silent>    <leader>bc :BufferCloseAllButCurrent<CR>
-" nnoremap <silent>    <leader>bc :BufferCloseAllButPinned<CR>
 nnoremap <silent>    <leader>bl :BufferCloseBuffersLeft<CR>
 nnoremap <silent>    <leader>br :BufferCloseBuffersRight<CR>
 
 lua <<EOF
   -- Comment
   require('Comment').setup()
+
+  -- hlslens
+  require('hlslens').setup({
+    calm_down = true,
+    nearest_only = true,
+    nearest_float_when = 'always'
+  })
+
+  local kopts = {noremap = true, silent = true}
+
+  vim.api.nvim_set_keymap('n', 'n',
+      [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+      kopts)
+  vim.api.nvim_set_keymap('n', 'N',
+      [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+      kopts)
+  vim.api.nvim_set_keymap('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+
+  vim.api.nvim_set_keymap('x', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('x', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('x', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('x', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+
+  vim.api.nvim_set_keymap('n', '<Leader>n', ':noh<CR>', kopts)
 
   -- Setup nvim-cmp.
   local cmp = require'cmp'
@@ -331,35 +343,11 @@ lua <<EOF
     mapping = {
         ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
         ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        -- ['<Down>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-        -- ['<Up>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-        -- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.close(),
         ['<CR>'] = cmp.mapping.confirm({
             select = true,
             behavior = cmp.ConfirmBehavior.Replace,
         }),
-        -- ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' })
-        --['<Tab>'] = function(fallback)
-        --    if cmp.visible() then
-        --        cmp.select_next_item()
-        --    elseif luasnip.expand_or_jumpable() then
-        --        luasnip.expand_or_jump()
-        --    else
-        --        fallback()
-        --    end
-        --end,
-        --['<S-Tab>'] = function(fallback)
-        --    if cmp.visible() then
-        --        cmp.select_prev_item()
-        --    elseif luasnip.jumpable(-1) then
-        --        luasnip.jump(-1)
-        --    else
-        --        fallback()
-        --    end
-        --end,
     },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -390,11 +378,6 @@ lua <<EOF
 
   -- Setup lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  -- local nvim_lsp = require('lspconfig').clangd.setup {
-  --     capabilities = capabilities
-  --   }
-
   local lsp_installer = require("nvim-lsp-installer")
 
   -- Register a handler that will be called for all installed servers.
@@ -423,36 +406,14 @@ lua <<EOF
     },
     highlight = {
       enable = true,              -- false will disable the whole extension
-      -- disable = { "c", "rust" },  -- list of language that will be disabled
-      -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-      -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-      -- Using this option may slow down your editor, and you may see some duplicate highlights.
-      -- Instead of true it can also be a list of languages
       additional_vim_regex_highlighting = false,
     },
     rainbow = {
       enable = true,
-      -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
       extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
       max_file_lines = nil, -- Do not enable for files with more than n lines, int
-      -- colors = {}, -- table of hex strings
-      -- termcolors = {} -- table of colour name strings
     }
   }
-
-  -- telescope
-  -- require('telescope').setup {
-  --   extensions = {
-  --     fzf = {
-  --       fuzzy = true,                    -- false will only do exact matching
-  --       override_generic_sorter = true,  -- override the generic sorter
-  --       override_file_sorter = true,     -- override the file sorter
-  --       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-  --                                        -- the default case_mode is "smart_case"
-  --     }
-  --   }
-  -- }
-  -- require('telescope').load_extension('fzf')
 
   local saga = require 'lspsaga'
   saga.setup{}
@@ -513,181 +474,6 @@ lua <<EOF
       -- you can put your mapping here it only use normal mode
     },
   })
-
-  --Git
-  -- local vgit = require('vgit')
-  -- vgit.setup({
-  --   debug = false,
-  --   keymaps = {
-  --       ['n <leader>gp'] = 'buffer_hunk_preview',
-  --       ['n <leader>gd'] = 'buffer_diff_preview',
-  --       ['n <leader>gh'] = 'buffer_history_preview',
-  --       ['n <leader>gb'] = 'buffer_gutter_blame_preview',
-  --   },
-  --   settings = {
-  --   hls = {
-  --     GitBackgroundPrimary = 'NormalFloat',
-  --     GitBackgroundSecondary = {
-  --       gui = nil,
-  --       fg = nil,
-  --       bg = nil,
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --     GitBorder = 'LineNr',
-  --     GitLineNr = 'LineNr',
-  --     GitComment = 'Comment',
-  --     GitSignsAdd = {
-  --       gui = nil,
-  --       fg = '#d7ffaf',
-  --       bg = nil,
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --     GitSignsChange = {
-  --       gui = nil,
-  --       fg = '#7AA6DA',
-  --       bg = nil,
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --     GitSignsDelete = {
-  --       gui = nil,
-  --       fg = '#e95678',
-  --       bg = nil,
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --     GitSignsAddLn = 'DiffAdd',
-  --     GitSignsDeleteLn = 'DiffDelete',
-  --     GitWordAdd = {
-  --       gui = nil,
-  --       fg = nil,
-  --       bg = '#5d7a22',
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --     GitWordDelete = {
-  --       gui = nil,
-  --       fg = nil,
-  --       bg = '#960f3d',
-  --       sp = nil,
-  --       override = false,
-  --     },
-  --   },
-  --   live_blame = {
-  --     enabled = true,
-  --     format = function(blame, git_config)
-  --       local config_author = git_config['user.name']
-  --       local author = blame.author
-  --       if config_author == author then
-  --         author = 'You'
-  --       end
-  --       local time = os.difftime(os.time(), blame.author_time)
-  --         / (60 * 60 * 24 * 30 * 12)
-  --       local time_divisions = {
-  --         { 1, 'years' },
-  --         { 12, 'months' },
-  --         { 30, 'days' },
-  --         { 24, 'hours' },
-  --         { 60, 'minutes' },
-  --         { 60, 'seconds' },
-  --       }
-  --       local counter = 1
-  --       local time_division = time_divisions[counter]
-  --       local time_boundary = time_division[1]
-  --       local time_postfix = time_division[2]
-  --       while time < 1 and counter ~= #time_divisions do
-  --         time_division = time_divisions[counter]
-  --         time_boundary = time_division[1]
-  --         time_postfix = time_division[2]
-  --         time = time * time_boundary
-  --         counter = counter + 1
-  --       end
-  --       local commit_message = blame.commit_message
-  --       if not blame.committed then
-  --         author = 'You'
-  --         commit_message = 'Uncommitted changes'
-  --         return string.format(' %s • %s', author, commit_message)
-  --       end
-  --       local max_commit_message_length = 255
-  --       if #commit_message > max_commit_message_length then
-  --         commit_message = commit_message:sub(1, max_commit_message_length) .. '...'
-  --       end
-  --       return string.format(
-  --         ' %s, %s • %s',
-  --         author,
-  --         string.format(
-  --           '%s %s ago',
-  --           time >= 0 and math.floor(time + 0.5) or math.ceil(time - 0.5),
-  --           time_postfix
-  --         ),
-  --         commit_message
-  --       )
-  --     end,
-  --   },
-  --   live_gutter = {
-  --     enabled = true,
-  --   },
-  --   scene = {
-  --     diff_preference = 'unified',
-  --   },
-  --   signs = {
-  --     priority = 10,
-  --     definitions = {
-  --       GitSignsAddLn = {
-  --         linehl = 'GitSignsAddLn',
-  --         texthl = nil,
-  --         numhl = nil,
-  --         icon = nil,
-  --         text = '',
-  --       },
-  --       GitSignsDeleteLn = {
-  --         linehl = 'GitSignsDeleteLn',
-  --         texthl = nil,
-  --         numhl = nil,
-  --         icon = nil,
-  --         text = '',
-  --       },
-  --       GitSignsAdd = {
-  --         texthl = 'GitSignsAdd',
-  --         numhl = nil,
-  --         icon = nil,
-  --         linehl = nil,
-  --         text = '┃',
-  --       },
-  --       GitSignsDelete = {
-  --         texthl = 'GitSignsDelete',
-  --         numhl = nil,
-  --         icon = nil,
-  --         linehl = nil,
-  --         text = '┃',
-  --       },
-  --       GitSignsChange = {
-  --         texthl = 'GitSignsChange',
-  --         numhl = nil,
-  --         icon = nil,
-  --         linehl = nil,
-  --         text = '┃',
-  --       },
-  --     },
-  --     usage = {
-  --       scene = {
-  --         add = 'GitSignsAddLn',
-  --         remove = 'GitSignsDeleteLn',
-  --       },
-  --       main = {
-  --         add = 'GitSignsAdd',
-  --         remove = 'GitSignsDelete',
-  --         change = 'GitSignsChange',
-  --       },
-  --     },
-  --   },
-  --   symbols = {
-  --     void = '⣿',
-  --   },
-  --   },
-  -- })
 
   -- following options are the default
   -- each of these are documented in `:help nvim-tree.OPTION_NAME`
@@ -757,37 +543,6 @@ lua <<EOF
         quit_on_open = false,
       }
     }
-  }
-  -- terminal
-  require("toggleterm").setup{
-    -- size can be a number or function which is passed the current terminal
-    size = 20,
-    open_mapping = [[<c-\>]],
-    hide_numbers = true, -- hide the number column in toggleterm buffers
-    shade_filetypes = {"fzf"},
-    shade_terminals = false,
-    shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
-    start_in_insert = true,
-    insert_mappings = false, -- whether or not the open mapping applies in insert mode
-    persist_size = true,
-    direction = 'float', --'vertical' | 'horizontal' | 'window' | 'float',
-    close_on_exit = true, -- close the terminal window when the process exits
-    shell = vim.o.shell, -- change the default shell
-    -- This field is only relevant if direction is set to 'float'
-    float_opts = {
-      -- The border key is *almost* the same as 'nvim_open_win'
-      -- see :h nvim_open_win for details on borders however
-      -- the 'curved' border is a custom border type
-      -- not natively supported but implemented in this plugin.
-      border = 'shadow',  --'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
-      -- width = <value>,
-      -- height = <value>,
-      winblend = 3,
-      highlights = {
-        border = "Normal",
-        background = "Normal",
-        }
-      },
   }
 
 EOF
