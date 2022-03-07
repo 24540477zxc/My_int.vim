@@ -8,6 +8,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'romgrk/barbar.nvim'
+Plug 'nmaiti/fzf_cscope.vim'
+
+Plug 'farmergreg/vim-lastplace'
 
 "cursorline
 Plug 'yamatsum/nvim-cursorline'
@@ -102,6 +105,7 @@ colorscheme sonokai
 let g:airline_theme = 'sonokai'
 " " let g:airline_theme = 'gruvbox_material'
 let g:airline#extensions#tabline#enabled = 0
+let g:airline#extensions#vista#enabled = 0
 let g:airline_powerline_fonts = 1        " 启用powerline样式字体
 
 
@@ -168,7 +172,7 @@ tnoremap <esc> <C-\><C-N>
 " =================
 
 " Clang format
-map <leader>k :py3f /home/jokeo/tool/clang/tools/clang-format/clang-format.py<cr>
+map <leader>mm :py3f /home/jokeo/tool/clang/tools/clang-format/clang-format.py<cr>
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
